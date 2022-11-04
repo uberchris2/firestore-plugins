@@ -16,6 +16,7 @@
 
 package io.cdap.plugin.gcp.firestore.source;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.data.format.UnexpectedFormatException;
@@ -90,6 +91,11 @@ public class QueryDocumentSnapshotToRecordTransformer {
 
     if (object == null) {
       return null;
+    }
+
+    //hack to fix Firestore timestamps
+    if (Timestamp.class.isInstance(object)) {
+      object = ((Timestamp) object).toDate();
     }
 
     Schema.LogicalType fieldLogicalType = schema.getLogicalType();
